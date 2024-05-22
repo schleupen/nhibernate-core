@@ -58,11 +58,6 @@ namespace NHibernate.Type
 			}
 		}
 
-		public override object Get(DbDataReader rs, string name, ISessionImplementor session)
-		{
-			return Get(rs, rs.GetOrdinal(name), session);
-		}
-
 		public override void Set(DbCommand st, object value, int index, ISessionImplementor session)
 		{
 			if (session.Factory.ConnectionProvider.Driver.RequiresTimeSpanForTime)
