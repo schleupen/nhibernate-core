@@ -79,7 +79,7 @@ jobs:
       uses: actions/upload-artifact@v6
       with:
         name: package
-        path: package/NHibernate.nupkg
+        path: package/NHibernate.*.nupkg
         if-no-files-found: error
         retention-days: 5
     
