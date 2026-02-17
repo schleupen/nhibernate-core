@@ -30,7 +30,6 @@ using NUnit.Framework;
 namespace NHibernate.Test.CacheTest
 {
 	using System.Threading.Tasks;
-	using System.Threading;
 	[TestFixture]
 	public class SerializationFixtureAsync
 	{
@@ -313,11 +312,11 @@ namespace NHibernate.Test.CacheTest
 			Assert.That(copy.EntityName, Is.EqualTo(original.EntityName));
 		}
 
-		private static async Task<T> TestDataContractSerializerAsync<T>(T obj, CancellationToken cancellationToken = default(CancellationToken))
+		private static async Task<T> TestDataContractSerializerAsync<T>(T obj)
 		{
-			var xml = await (DataContractSerializerToXmlAsync(obj, cancellationToken));
+			var xml = await (DataContractSerializerToXmlAsync(obj));
 			obj = DataContractSerializerFromXml<T>(xml);
-			Assert.That(xml, Is.EqualTo(await (DataContractSerializerToXmlAsync(obj, cancellationToken))));
+			Assert.That(xml, Is.EqualTo(await (DataContractSerializerToXmlAsync(obj))));
 			return obj;
 		}
 
@@ -329,7 +328,7 @@ namespace NHibernate.Test.CacheTest
 			return obj;
 		}
 
-		private static async Task<string> DataContractSerializerToXmlAsync<T>(T obj, CancellationToken cancellationToken = default(CancellationToken))
+		private static async Task<string> DataContractSerializerToXmlAsync<T>(T obj)
 		{
 			using (var memoryStream = new MemoryStream())
 			using (var reader = new StreamReader(memoryStream))
@@ -337,7 +336,7 @@ namespace NHibernate.Test.CacheTest
 				var serializer = new DataContractSerializer(typeof(T), KnownTypes);
 				serializer.WriteObject(memoryStream, obj);
 				memoryStream.Position = 0;
-				return await (reader.ReadToEndAsync(cancellationToken));
+				return await (reader.ReadToEndAsync());
 			}
 		}
 
