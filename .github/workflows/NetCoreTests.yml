@@ -58,7 +58,7 @@ jobs:
         pwsh -noprofile -command "& ./build.ps1 -TaskList Set-Configuration,Test -properties @{'Database' = '${{matrix.DB}}';'ConnectionString'='${{matrix.CONNECTION_STRING}}'}"
         
   package:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: db
     steps:
     - uses: actions/checkout@v4
@@ -75,20 +75,27 @@ jobs:
         dotnet build BuildTool.sln -c Release -o bin 
     - name: Build with NAnt from Tools directory
       run: |
-        chmod +x Tools/nant/bin/NAnt.exe
-        mono Tools/nant/bin/NAnt.exe -D:project.config=release clean package nugetpushbat
-      shell: bash
+        .\Tools\nant\bin\NAnt.exe -D:project.config=release clean package nugetpushbat
+      shell: cmd
     
     - name: List generated NuGet packages
       run: |
         echo "Generated NuGet packages:"
-        find build -name "*.nupkg" -type f -exec ls -lh {} \;
+        dir /s build\*\nuget_gallery\*.nupkg
+    
     - name: Upload NuGet Package as Artifact
       uses: actions/upload-artifact@v6
       with:
         name: nhibernate-nuget-package
-        path: |
-          build/nuget_gallery/*.nupkg
+        path: build/**/nuget_gallery/*.nupkg
         retention-days: 30
-        if-no-files-found: warn
+        if-no-files-found: error
+    
+    - name: Upload Symbol Package as Artifact
+      uses: actions/upload-artifact@v6
+      with:
+        name: nhibernate-symbol-package
+        path: build/**/nuget_gallery/*.snupkg
+        retention-days: 30
+        if-no-files-found: ignore
     
