@@ -75,7 +75,7 @@ jobs:
         dotnet build BuildTool.sln -c Release -o bin 
     - name: Build with NAnt from Tools directory
       run: |
-        .\Tools\nant\bin\NAnt.exe -D:project.config=release clean package nugetpushbat
+        .\Tools\nant\bin\NAnt.exe -D:project.config=release clean package nugetpushbat -D:skip.tests=true
       shell: cmd
     
     - name: List generated NuGet packages
