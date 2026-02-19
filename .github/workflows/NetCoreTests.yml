@@ -68,18 +68,22 @@ jobs:
         dotnet-version: 6.0.x
         uses: actions/dotnet@5
     - name: dotnet tool restore
-      run: dotnet tool restore
-    - name: dotnet restore
-      run: dotnet restore src/NHibernate.sln
-    - name: dotnet build
-      run: dotnet build src/NHibernate.sln -c Release --no-restore
-    - name: dotnet pack
-      run: dotnet pack src/NHibernate/NHibernate.csproj -c Release -o package
-    - name: upload package as artifact
+      run: dotnet tool restore      
+    - name: Install NAnt
+      run: |
+        dotnet tool install -g nant
+    - name: Build with NAnt (using default.build)
+      run: |
+        nant -t:net-4.0 -D:project.config=release clean package nugetpushbat
+      shell: bash
+    - name: Find NuGet packages
+      run: find . -name "*.nupkg" -type f -exec ls -lh {} \;
+    - name: Upload NuGet Package as Artifact
       uses: actions/upload-artifact@v6
       with:
-        name: package
-        path: package/NHibernate.*.nupkg
-        if-no-files-found: error
-        retention-days: 5
+        name: nhibernate-nuget-package
+        path: |
+          build/nuget_gallery/*.nupkg
+        retention-days: 30
+        if-no-files-found: warn
     
