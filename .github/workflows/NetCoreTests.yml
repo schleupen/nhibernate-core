@@ -77,12 +77,7 @@ jobs:
       run: |
         .\Tools\nant\bin\NAnt.exe -D:project.config=release clean package nugetpushbat -D:skip.tests=true
       shell: cmd
-    
-    - name: List generated NuGet packages
-      run: |
-        echo "Generated NuGet packages:"
-        dir /s build\*\nuget_gallery\*.nupkg
-    
+        
     - name: Upload NuGet Package as Artifact
       uses: actions/upload-artifact@v6
       with:
